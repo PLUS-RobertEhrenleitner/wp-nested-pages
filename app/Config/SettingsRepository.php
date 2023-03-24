@@ -205,6 +205,7 @@ class SettingsRepository
 		$options = [
 			'nested_pages_custom_fields_hidden',
 			'nestedpages_allowsorting',
+			'nestedpages_allow_pagegroup_sorting',
 			'nestedpages_disable_menu',
 			'nestedpages_menu',
 			'nestedpages_menusync',
@@ -262,4 +263,25 @@ class SettingsRepository
 		endif;
 		return $roles;
 	}
+
+	/**
+	* Sort Page Groups enabled
+	* @return array of role names
+	*/
+	public function sortPageGroupsEnabled()
+	{
+		$roles = get_option('nestedpages_allow_pagegroup_sorting');
+
+		// If the option hasn't been saved yet, fall back to editor
+		if ( !$roles ) :
+			$roles = [];
+			$all_roles = wp_roles();
+			foreach ( $all_roles->roles as $name => $role ){
+				$single_role = get_role($name);
+				if ( $single_role->has_cap('edit_others_posts') ) $roles[] = $name;
+			}
+		endif;
+		return $roles;
+	}
+
 }

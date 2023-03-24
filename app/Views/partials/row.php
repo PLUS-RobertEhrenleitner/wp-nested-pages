@@ -19,8 +19,13 @@ if ( !$wpml ) $wpml_pages = true;
 	<div class="row-inner">
 		<img src="<?php echo \NestedPages\Helpers::plugin_url() . '/assets/images/arrow-child.svg'; ?>" alt="<?php _e('Arrow', 'wp-nested-pages'); ?>" class="np-icon-sub-menu">
 		
-		<?php 
-		$sortable = apply_filters('nestedpages_post_sortable', true, $this->post, $this->post_type);
+		<?php
+		if ( $this->post->post_type == 'page' && !$this->post->post_parent ) {
+			$sortable = $this->user->canSortPageGroups('nestedpages_allow_pagegroup_sorting');
+		} else {
+			$sortable = true;
+		}
+		$sortable = apply_filters('nestedpages_post_sortable', $sortable, $this->post, $this->post_type);
 		if ( $this->user->canSortPosts($this->post_type->name) && !$this->listing_repo->isSearch() && !$this->post_type_settings->disable_sorting && $wpml_current_language !== 'all' && !$this->listing_repo->isOrdered($this->post_type->name) && $sortable ) : ?>
 		<img src="<?php echo \NestedPages\Helpers::plugin_url() . '/assets/images/handle.svg'; ?>" alt="<?php _e('Sorting Handle', 'wp-nested-pages'); ?>" class="handle np-icon-menu">
 		<?php endif; ?>

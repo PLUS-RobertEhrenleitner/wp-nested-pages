@@ -118,6 +118,25 @@ class UserRepository
 	}
 
 	/**
+	* Can current user sort page groups
+	* @return boolean
+	*/
+	public function canSortPageGroups()
+	{
+		$roles = $this->getRoles();
+		$user_can_sort = false;
+		$roles_cansort = get_option('nestedpages_allow_pagegroup_sorting', []);
+		if ( $roles_cansort === "" ) $roles_cansort = [];
+
+		foreach($roles as $role){
+			if ( $role == 'administrator' ) return true;
+			if ( in_array($role, $roles_cansort) ) $user_can_sort = true; // Plugin Option
+		}
+
+		return $user_can_sort;
+	}
+
+	/**
 	* Can current user view the Nested Pages Sort View
 	* @return boolean
 	* @since 3.1.9
