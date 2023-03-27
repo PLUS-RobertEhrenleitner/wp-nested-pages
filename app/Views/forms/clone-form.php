@@ -26,17 +26,28 @@
 		<div class="form-control">
 			<label><?php _e( 'Status', 'wp-nested-pages' ); ?></label>
 			<select name="_status" data-clone-status>
-			<?php if ( $can_publish ) : ?>
+			<?php
+			$statuses = ['publish', 'pending', 'draft'];
+			$statuses = apply_filters('nestedpages_clone_post_statuses', $statuses);
+			?>
+			<?php if ( $can_publish && in_array('publish', $statuses) ) : ?>
 				<option value="publish"><?php _e( 'Published', 'wp-nested-pages' ); ?></option>
-			<?php endif; ?>
+			<?php endif;
+			if ( in_array('pending', $statuses) ):
+			?>
 				<option value="pending"><?php _e( 'Pending Review', 'wp-nested-pages' ); ?></option>
+			<?php endif;
+			if ( in_array('draft', $statuses) ):
+			?>
 				<option value="draft"><?php _e( 'Draft', 'wp-nested-pages' ); ?></option>
+			<?php endif; ?>
 			</select>
 		</div>
 
 		<?php
 			$authors_dropdown = '';
 			if ( is_super_admin() || current_user_can( $post_type_object->cap->edit_others_posts ) ) :
+				$current_user = wp_get_current_user();
 				$users_opt = [
 					'hide_if_only_one_author' => false,
 					'capability' => 'edit_posts',
@@ -44,8 +55,11 @@
 					'id' => 'post_author',
 					'class'=> 'authors',
 					'multi' => 1,
-					'echo' => 0
+					'echo' => 0,
+					'selected' => $current_user->ID,
+					'include_selected' => true,
 				];
+				$users_opt = apply_filters('nestedpages_clone_users_opt', $users_opt);
 
 				if ( $authors = wp_dropdown_users( $users_opt ) ) :
 					$authors_dropdown  = '<div class="form-control" data-clone-author><label>' . __( 'Author' ) . '</label>';
