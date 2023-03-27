@@ -281,6 +281,7 @@ class SettingsRepository
 				if ( $single_role->has_cap('edit_others_posts') ) $roles[] = $name;
 			}
 		endif;
+		error_log("ROLES: " . json_encode($roles));
 		return $roles;
 	}
 

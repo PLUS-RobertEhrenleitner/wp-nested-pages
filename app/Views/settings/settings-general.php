@@ -1,5 +1,6 @@
 <?php
 $allowsorting = get_option('nestedpages_allowsorting', []);
+$allow_pagegroup_sorting = get_option('nestedpages_allow_pagegroup_sorting', []);
 $allowsortview = $this->settings->sortViewEnabled();
 if ( $allowsorting == "" ) $allowsorting = [];
 $sync_status = ( $this->settings->menuSyncEnabled() ) ? __('Currently Enabled', 'wp-nested-pages') : __('Currently Disabled', 'wp-nested-pages');
@@ -105,12 +106,14 @@ $sync_status = ( $this->settings->menuSyncEnabled() ) ? __('Currently Enabled', 
 				<div class="field">
 					<?php foreach ( $this->user_repo->allRoles(['Administrator']) as $role ) : ?>
 					<label>
-						<input type="checkbox" name="nestedpages_allow_pagegroup_sorting[]" value="<?php echo $role['name']; ?>" <?php if ( in_array($role['name'], $allowsorting) ) echo 'checked'; ?> >
+						<input type="checkbox" name="nestedpages_allow_pagegroup_sorting[]" value="<?php echo $role['name']; ?>" <?php if ( in_array($role['name'], $allow_pagegroup_sorting) ) echo 'checked'; ?> >
 						<?php echo esc_html($role['label']); ?>
 					</label>
 					<br />
 					<?php endforeach; ?>
-					<p><em><?php _e('Admins always have sorting ability.', 'wp-nested-pages'); ?></em></p>
+					<p><em><?php _e('Admins always have sorting ability.', 'wp-nested-pages'); ?>
+					<?php _e('Users need to have the permission to sort pages to be able to sort page groups.', 'wp-nested-pages'); ?>
+					</em></p>
 				</div>
 			</div><!-- .row -->
 

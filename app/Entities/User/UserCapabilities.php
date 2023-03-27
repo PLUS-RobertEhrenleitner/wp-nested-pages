@@ -49,4 +49,5 @@ class UserCapabilities
 			endforeach;
 		endforeach;
 	}
+
 }

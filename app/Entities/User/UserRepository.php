@@ -94,6 +94,30 @@ class UserRepository
 		return false;
 	}
 
+	private function canSort($post_type) {
+		if ( $post_type == 'pagegroup' ) {
+			$post_type = 'page';
+			$option = 'nestedpages_allow_pagegroup_sorting';
+			$capability = 'nestedpages_sorting_pagegroup';
+		} else {
+			$option = 'nestedpages_allowsorting';
+			$capability = "nestedpages_sorting_{$post_type}";
+		}
+		$roles = $this->getRoles();
+		$user_can_sort = false;
+		$roles_cansort = get_option($option, []);
+		if ( $roles_cansort == "" ) $roles_cansort = [];
+
+		foreach($roles as $role){
+			if ( $role == 'administrator' ) return true;
+			if ( in_array($role, $roles_cansort) ) $user_can_sort = true; // Plugin Option
+			$role_obj = get_role($role);
+			if ( $role_obj->has_cap($capability) ) $user_can_sort = true; // Custom Capability
+		}
+
+		return $user_can_sort;
+	}
+
 	/**
 	* Can current user sort pages
 	* @return boolean
@@ -102,19 +126,7 @@ class UserRepository
 	*/
 	public function canSortPosts($post_type = 'page')
 	{
-		$roles = $this->getRoles();
-		$user_can_sort = false;
-		$roles_cansort = get_option('nestedpages_allowsorting', []);
-		if ( $roles_cansort == "" ) $roles_cansort = [];
-
-		foreach($roles as $role){
-			if ( $role == 'administrator' ) return true;
-			if ( in_array($role, $roles_cansort) ) $user_can_sort = true; // Plugin Option
-			$role_obj = get_role($role);
-			if ( $role_obj->has_cap("nestedpages_sorting_$post_type") ) $user_can_sort = true; // Custom Capability
-		}
-
-		return $user_can_sort;
+		return $this->canSort($post_type);
 	}
 
 	/**
@@ -123,17 +135,7 @@ class UserRepository
 	*/
 	public function canSortPageGroups()
 	{
-		$roles = $this->getRoles();
-		$user_can_sort = false;
-		$roles_cansort = get_option('nestedpages_allow_pagegroup_sorting', []);
-		if ( $roles_cansort === "" ) $roles_cansort = [];
-
-		foreach($roles as $role){
-			if ( $role == 'administrator' ) return true;
-			if ( in_array($role, $roles_cansort) ) $user_can_sort = true; // Plugin Option
-		}
-
-		return $user_can_sort;
+		return $this->canSort('pagegroup');
 	}
 
 	/**
