@@ -35,7 +35,7 @@
 			<label><?php _e( 'Status' ); ?></label>
 			<?php
 			$statuses = ['publish', 'draft'];
-			$statuses = apply_filters('nestedpages_new_child_statuses', $statuses);
+			$statuses = apply_filters('nestedpages_new_child_post_statuses', $statuses);
 			?>
 			<select name="_status" class="np_status">
 			<?php if ( $can_publish && in_array('publish', $statuses) ) : ?>
@@ -63,7 +63,7 @@
 				'echo' => 0,
 				'selected' => get_current_user_id()
 			];
-			$users_opt = apply_filters('nestedpages_new_child_users_opt', $users_opt);
+			$users_opt = apply_filters('nestedpages_new_child_post_users_opt', $users_opt);
 
 			if ( $authors = wp_dropdown_users( $users_opt ) ) :
 				$authors_dropdown  = '<div class="form-control np_author"><label>' . __( 'Author' ) . '</label>';
