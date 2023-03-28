@@ -271,9 +271,11 @@ if ( !$wpml ) $wpml_pages = true;
 			<?php
 			endif; // status
 			endif; // View in row actions
-			?>
+
+			$user_can_trash_page = in_array('trash', $this->post_type_settings->row_actions);
+			if (!$this->post->post_parent) $user_can_trash_page &= $this->user->canDeletePageGroups();
 			
-			<?php if ( current_user_can('delete_pages') && $this->integrations->plugins->editorial_access_manager->hasAccess($this->post->id)  && in_array('trash', $this->post_type_settings->row_actions) ) : ?>
+			if ( current_user_can('delete_pages') && $this->integrations->plugins->editorial_access_manager->hasAccess($this->post->id) && $user_can_trash_page ) : ?>
 			<?php if ( $this->post_type->hierarchical && $this->publishedChildrenCount($this->post) > 0 ) : ?>
 			<div class="nestedpages-dropdown" data-dropdown>
 				<a href="#" class="np-btn np-btn-trash" data-dropdown-toggle>

@@ -149,6 +149,53 @@ class UserRepository
 	}
 
 	/**
+	* Can the user create, delete or edit page groups
+	*/
+	private function canDoSomethingWithPageGroup($what)
+	{
+		$roles = $this->getRoles();
+		$filter = "nestedpages_pagegroup_$what";
+		$user_can = false;
+		$roles_can = get_option('nestedpages_pagegroup_' . $what, []);
+		if ( $roles_can == "" ) $roles_can = [];
+
+		foreach($roles as $role){
+			if ( $role == 'administrator' ) return true;
+			if ( in_array($role, $roles_can) ) $user_can = true; // Plugin Option
+			$role_obj = get_role($role);
+			if ( $role_obj->has_cap($filter) ) $user_can = true; // Custom Capability
+		}
+		$user_can = apply_filters($filter, $user_can);
+
+		return $user_can;
+	}
+
+	/**
+	* Can the user create page groups
+	*/
+	public function canCreatePageGroup()
+	{
+		return $this->canDoSomethingWithPageGroup('create');
+	}
+
+	/**
+	* Can the user delete page groups
+	*/
+	public function canDeletePageGroup()
+	{
+		return $this->canDoSomethingWithPageGroup('delete');
+	}
+
+	/**
+	* Can the user edit page groups
+	*/
+	public function canEditPageGroup()
+	{
+		return $this->canDoSomethingWithPageGroup('edit');
+	}
+
+
+	/**
 	* Can the user add new posts for review?
 	*/
 	public function canSubmitPending($post_type = 'post')

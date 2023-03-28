@@ -211,7 +211,10 @@ class SettingsRepository
 			'nestedpages_posttypes',
 			'nestedpages_ui',
 			'nestedpages_version',
-			'nestedpages_admin'
+			'nestedpages_admin',
+			'nestedpages_pagegroup_create',
+			'nestedpages_pagegroup_delete',
+			'nestedpages_pagegroup_edit',
 		];
 		foreach($options as $option){
 			delete_option($option);

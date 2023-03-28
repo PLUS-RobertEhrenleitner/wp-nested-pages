@@ -123,6 +123,43 @@ $sync_status = ( $this->settings->menuSyncEnabled() ) ? __('Currently Enabled', 
 
 			<div class="row">
 				<div class="description">
+					<p><strong><?php _e('Allow Creation, Deletion and Editing of Page Groups', 'wp-nested-pages'); ?></strong></p>
+					<p><?php _e('These actions are also filterable through the filters nestedpages_pagegroup_create, nestedpages_pagegroup_delete and nestedpages_pagegroup_edit, respectively', 'wp-nested-pages'); ?></p>
+				</div>
+				<div class="field">
+					<table>
+						<thead>
+							<tr>
+								<th><?= esc_html__('Role', 'wp-nested-pages')?></th>
+								<th><?= esc_html__('Create', 'wp-nested-pages')?></th>
+								<th><?= esc_html__('Delete', 'wp-nested-pages')?></th>
+								<th><?= esc_html__('Edit', 'wp-nested-pages')?></th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+							$actions = ['create', 'delete', 'edit'];
+							$allow_pagegroup_action = array();
+							foreach ($actions as $action) {
+								$allow_pagegroup_action[$action] = get_option("nestedpages_pagegroup_$action", []);
+							}
+							foreach ( $this->user_repo->allRoles(['Administrator']) as $role ) : ?>
+							<tr>
+								<td><label><?php echo esc_html($role['label']); ?></label></td><?php
+								for ($i = 0; $i < 3; $i++):
+									$action = $actions[$i]; ?>
+							<td><input type="checkbox" name="nestedpages_pagegroup_<?= $action ?>[]" value="<?php echo $role['name']; ?>" <?php if ( in_array($role['name'], $allow_pagegroup_action[$action]) ) echo 'checked'; ?> ></td>
+							<?php endfor; ?>
+							</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+					<p><em><?php _e('Admins are always allowed to create, delete or edit page groups.', 'wp-nested-pages'); ?></em></p>
+				</div>
+			</div><!-- .row -->
+
+			<div class="row">
+				<div class="description">
 					<p><strong><?php _e('Reset Plugin Settings', 'wp-nested-pages'); ?></strong></p>
 					<p><?php _e('Warning: Resetting plugin settings will remove all menu settings, post type customizations, role customizations and any other Nested Pages settings. These will be replaced with the default settings. This action cannot be undone.', 'wp-nested-pages'); ?></p>
 				</div>
