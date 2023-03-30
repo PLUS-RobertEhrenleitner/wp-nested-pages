@@ -20,13 +20,19 @@ if ( !$wpml ) $wpml_pages = true;
 		<img src="<?php echo \NestedPages\Helpers::plugin_url() . '/assets/images/arrow-child.svg'; ?>" alt="<?php _e('Arrow', 'wp-nested-pages'); ?>" class="np-icon-sub-menu">
 		
 		<?php 
+		$is_editable = true;
+		$is_editable = current_user_can('edit_others_posts') || $this->post->author === get_current_user_id();
+		if ( $is_editable && !$this->post->post_parent ) $is_editable = $this->user->canEditPageGroups();
+		
 		$sortable = apply_filters('nestedpages_post_sortable', true, $this->post, $this->post_type);
-		if ( $this->user->canSortPosts($this->post_type->name) && !$this->listing_repo->isSearch() && !$this->post_type_settings->disable_sorting && $wpml_current_language !== 'all' && !$this->listing_repo->isOrdered($this->post_type->name) && $sortable ) : ?>
+		if ( $this->user->canSortPosts($this->post_type->name) && !$this->listing_repo->isSearch() && !$this->post_type_settings->disable_sorting && $wpml_current_language !== 'all' && !$this->listing_repo->isOrdered($this->post_type->name) && $sortable && $is_editable) : ?>
 		<img src="<?php echo \NestedPages\Helpers::plugin_url() . '/assets/images/handle.svg'; ?>" alt="<?php _e('Sorting Handle', 'wp-nested-pages'); ?>" class="handle np-icon-menu">
 		<?php endif; ?>
 
+		<?php if ($is_editable): ?>
 		<a href="<?php echo apply_filters('nestedpages_edit_link', get_edit_post_link(), $this->post); ?>" class="page-link page-title">
-			<span class="title">
+		<?php endif; ?>
+			<span class="title" title="<?= $this->post->ID ?>">
 				<?php 
 					$title = apply_filters( 'the_title', $this->post->title, $this->post->id ); 
 					echo apply_filters('nestedpages_post_title', $title, $this->post);
@@ -67,21 +73,23 @@ if ( !$wpml ) $wpml_pages = true;
 					echo '<img src="' . \NestedPages\Helpers::plugin_url() . '/assets/images/lock.svg" alt="' . __('Lock Icon', 'wp-nested-pages') . '">';
 					echo '</span>';
 				} else {
-					$display_edit = ( !current_user_can('edit_others_posts') && $this->post->author !== get_current_user_id() ) ? false : true;
-					if ( $display_edit ) echo '<span class="edit-indicator">' . apply_filters('nestedpages_edit_link_text', __('Edit', 'wp-nested-pages'), $this->post) . '</span>';
+					if ( $is_editable ) echo '<span class="edit-indicator">' . apply_filters('nestedpages_edit_link_text', __('Edit', 'wp-nested-pages'), $this->post) . '</span>';
 				}
 
 				// Sticky
-				echo '<span class="sticky"';
-				$sticky_text = apply_filters('nestedpages_make_sticky_text_row', __('(Sticky)', 'wp-nested-pages'), $this->post, $this->post_type);
-				if ( !in_array($this->post->id, $this->sticky_posts) ) echo ' style="display:none;"';
-				echo '>' . $sticky_text . '<span>';
+				if ( in_array($this->post->id, $this->sticky_posts) ) :
+					echo '<span class="sticky"';
+					$sticky_text = apply_filters('nestedpages_make_sticky_text_row', __('(Sticky)', 'wp-nested-pages'), $this->post, $this->post_type);
+					echo '>' . $sticky_text . '<span>';
+				endif;
 
 				if ( post_password_required($this->post->id) ) {
 					echo '<img src="' . \NestedPages\Helpers::plugin_url() . '/assets/images/lock.svg" alt="' . __('Lock Icon', 'wp-nested-pages') . '">';
 				}
 			?>
+		<?php if ($is_editable): ?>
 		</a>
+		<?php endif; ?>
 
 		<?php echo $this->rowActions($assigned_pt); ?>
 
@@ -171,7 +179,10 @@ if ( !$wpml ) $wpml_pages = true;
 
 					<?php endif; ?>
 
-					<?php if ( $this->user->canSortPosts($this->post_type->name) && !$this->listing_repo->isSearch() && !$this->post_type_settings->disable_sorting && $wpml_current_language !== 'all' && !$this->listing_repo->isOrdered($this->post_type->name) ) : ?>
+					<?php
+					$can_push = $this->user->canSortPosts($this->post_type->name) && !$this->listing_repo->isSearch() && !$this->post_type_settings->disable_sorting && $wpml_current_language !== 'all' && !$this->listing_repo->isOrdered($this->post_type->name);
+					if ( !$this->page->post_parent ) $can_push &= $this->user->canEditPageGroups();
+					if ( $can_push ) : ?>
 
 					<?php if ( in_array('push_to_top', $this->post_type_settings->row_actions) ) : ?>
 					<li>
@@ -201,8 +212,10 @@ if ( !$wpml ) $wpml_pages = true;
 				</ul>
 			</div><!-- .dropdown -->
 
-			<?php 
-			$can_quickedit_post = apply_filters('nestedpages_quickedit', true, $this->post);
+			<?php
+			$can_quickedit_post = !$this->post->post_parent ? $this->user->canEditPageGroups() : true;
+			$can_quickedit_post_filtered = apply_filters('nestedpages_quickedit', $can_quickedit_post, $this->post);
+			$can_quickedit_post = $can_quickedit_post && $can_quickedit_post_filtered;
 			if ( !current_user_can('edit_others_posts') ){
 				$author = get_post_field('post_author', $this->post->ID);
 				if ( intval($author) !== get_current_user_id() ) $can_quickedit_post = false;
@@ -321,9 +334,10 @@ if ( !$wpml ) $wpml_pages = true;
 		$out .= '</div>';
 		echo $out;
 	endif;
-	?>
 
+	if ( $is_editable ): ?>
 	<div class="np-bulk-checkbox">
 		<input type="checkbox" name="nestedpages_bulk[]" value="<?php echo esc_attr($this->post->id); ?>" data-np-bulk-checkbox="<?php echo esc_attr($this->post->title); ?>" data-np-post-type="<?php echo esc_attr($this->post->post_type); ?>" />
 	</div>
+	<?php endif; ?>
 </div><!-- .row -->

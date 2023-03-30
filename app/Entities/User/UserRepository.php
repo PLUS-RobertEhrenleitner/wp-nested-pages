@@ -161,9 +161,7 @@ class UserRepository
 
 		foreach($roles as $role){
 			if ( $role == 'administrator' ) return true;
-			if ( in_array($role, $roles_can) ) $user_can = true; // Plugin Option
-			$role_obj = get_role($role);
-			if ( $role_obj->has_cap($filter) ) $user_can = true; // Custom Capability
+			if ( in_array($role, $roles_can) ) $user_can = true;
 		}
 		$user_can = apply_filters($filter, $user_can);
 
@@ -173,7 +171,7 @@ class UserRepository
 	/**
 	* Can the user create page groups
 	*/
-	public function canCreatePageGroup()
+	public function canCreatePageGroups()
 	{
 		return $this->canDoSomethingWithPageGroup('create');
 	}
@@ -181,7 +179,7 @@ class UserRepository
 	/**
 	* Can the user delete page groups
 	*/
-	public function canDeletePageGroup()
+	public function canDeletePageGroups()
 	{
 		return $this->canDoSomethingWithPageGroup('delete');
 	}
@@ -189,7 +187,7 @@ class UserRepository
 	/**
 	* Can the user edit page groups
 	*/
-	public function canEditPageGroup()
+	public function canEditPageGroups()
 	{
 		return $this->canDoSomethingWithPageGroup('edit');
 	}
