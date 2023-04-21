@@ -104,6 +104,24 @@ if ( !$wpml ) $wpml_pages = true;
 				if ( post_password_required($this->post->id) ) {
 					echo '<img src="' . \NestedPages\Helpers::plugin_url() . '/assets/images/lock.svg" alt="' . __('Lock Icon', 'wp-nested-pages') . '">';
 				}
+
+				// Optional statuses
+				$statuses = apply_filters('nestedpages_page_status', [], $this->post)
+				if (is_array($statuses)) {
+					foreach ($statuses as $status) {
+						if (array_key_exists('label', $status)
+						  && (array_key_exists('icon-class', $status) || array_key_exists('dashboard-icon'))
+						  && array_key_exists('callback', $status)
+						  ) {
+							echo '<span>';
+							if (array_key_exists('icon-class', $status)) { // todo: icons
+							} elseif (array_key_exists('dashboard-icon', $status)) {
+							}
+							/// todo: callback
+							echo '</span>';
+						}
+					}
+				}
 			?>
 		</a>
 
