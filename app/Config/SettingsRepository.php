@@ -89,6 +89,15 @@ class SettingsRepository
 	}
 
 	/**
+	 * Show post status as icon
+	 */
+	public function showPostStatusIcon() {
+		$option = get_option('nestedpages_ui', false);
+		if ( $option && isset($option['poststatus_icons']) && $option['poststatus_icons'] == 'true' ) return true;
+		return false;
+	}
+
+	/**
 	* Are menus completely disabled?
 	* @return boolean
 	*/
@@ -211,7 +220,8 @@ class SettingsRepository
 			'nestedpages_posttypes',
 			'nestedpages_ui',
 			'nestedpages_version',
-			'nestedpages_admin'
+			'nestedpages_admin',
+			'nestedpages_poststatusicon',
 		];
 		foreach($options as $option){
 			delete_option($option);

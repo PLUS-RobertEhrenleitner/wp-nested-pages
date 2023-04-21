@@ -334,7 +334,9 @@ class Listing
 
 		echo '<ol class="nplist';
 		if ( count($compared) > 0 ) echo ' visible" style="display:block;';
-		echo '" id="np-' . $this->post_type->name . '">';		 
+		echo '" id="np-' . $this->post_type->name . '">';
+
+		if ( $this->settings->showPostStatusIcon() ) add_action( 'wp_enqueue_scripts', function() { wp_enqueue_style( 'dashicons' ); } );
 	}
 
 	/**

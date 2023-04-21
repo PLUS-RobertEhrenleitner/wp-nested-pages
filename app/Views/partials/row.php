@@ -36,10 +36,34 @@ if ( !$wpml ) $wpml_pages = true;
 			<?php 
 				// Post Status
 				echo '<span class="status">';
-				if ( $this->post->status !== 'publish' ) : 
-					global $wp_post_statuses;
-					echo '(' . $wp_post_statuses[$this->post->status]->label . ')';
-				endif;
+				global $wp_post_statuses;
+				if ( $this->settings->showPostStatusIcon() ) {
+					echo '<span style="margin-left: 0.5rem" class="status" ';
+					echo 'title="' . $wp_post_statuses[$this->post->status]->label . '">';
+					$dashicon = null;
+					switch ($this->post->status) {
+							case "publish":
+							  $dashicon = 'admin-site-alt';
+							  break;
+							case "draft":
+							  $dashicon = 'lock';
+							  break;
+							case "future":
+							  $dashicon = 'calendar-alt';
+							  break;
+							case "private":
+							  $dashicon = 'privacy';
+							  break;
+							default:
+							  echo $wp_post_statuses[$this->post->status]->label;
+					}
+					if ( $dashicon !== null ) echo '<span class="dashicons dashicons-' . $dashicon . '"></span>';
+					echo '</span>';
+				} else {
+					if ( $this->post->status !== 'publish' ) : 
+						echo '(' . $wp_post_statuses[$this->post->status]->label . ')';
+					endif;
+				}
 				if ( post_password_required($this->post->id) ) {
 					echo '<span class="locked password-required">';
 					echo '<img src="' . \NestedPages\Helpers::plugin_url() . '/assets/images/lock.svg" alt="' . __('Lock Icon', 'wp-nested-pages') . '">';

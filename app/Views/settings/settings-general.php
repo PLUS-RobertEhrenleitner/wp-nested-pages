@@ -31,6 +31,11 @@ $sync_status = ( $this->settings->menuSyncEnabled() ) ? __('Currently Enabled', 
 						<input type="checkbox" name="nestedpages_ui[non_indent]" value="true" <?php if ( $this->settings->nonIndentEnabled() ) echo 'checked'; ?> />
 						<?php _e('Use the classic (non-indented) hierarchy display.', 'wp-nested-pages'); ?>
 					</label></p>
+					<p><label>
+						<input type="checkbox" name="nestedpages_ui[poststatus_icons]" value="true" <?php if ( $this->settings->showPostStatusIcon() ) echo 'checked'; ?> />
+						<?php _e('Show the post status as icon') ?>
+					</label>
+					</p>
 				</div>
 			</div><!-- .row -->
 
