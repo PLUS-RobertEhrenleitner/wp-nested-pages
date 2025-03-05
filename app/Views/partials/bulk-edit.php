@@ -62,7 +62,13 @@ $has_menu_options = ( $this->user->canSortPosts($this->post_type->name) && $this
 					<select name="page_template">
 						<option value="">&mdash; <?php _e('No Change', 'wp-nested-pages'); ?> &mdash;</option>
 						<option value="default"><?php _e( 'Default Template', 'wp-nested-pages' ); ?></option>
-						<?php page_template_dropdown() ?>
+						<?php 
+              if( is_page() ){
+                page_template_dropdown();
+              }else{
+                page_template_dropdown('', $this->post_type->name);
+              }
+            ?>
 					</select>
 				</div>
 				<?php endif; ?>
@@ -82,6 +88,11 @@ $has_menu_options = ( $this->user->canSortPosts($this->post_type->name) && $this
 					?>
 				</div>
 				<?php endif; ?>
+
+				<?php
+				$custom_fields_left = $this->custom_fields_repo->outputBulkEditFields($this->post_type, 'left');
+				if ( $custom_fields_left ) echo $custom_fields_left;
+				?>
 
 			</div><!-- .left -->
 
@@ -116,6 +127,11 @@ $has_menu_options = ( $this->user->canSortPosts($this->post_type->name) && $this
 					</select>
 				</div>
 				<?php endif; endif; // Edit theme options ?>
+
+				<?php
+				$custom_fields_right = $this->custom_fields_repo->outputBulkEditFields($this->post_type, 'right');
+				if ( $custom_fields_right ) echo $custom_fields_right;
+				?>
 
 			</div><!-- .right -->
 		</div><!-- .fields -->
