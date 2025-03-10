@@ -74,7 +74,7 @@ endif;
 				data-nav-object="<?php echo esc_attr($this->post->nav_object); ?>"
 				data-nav-object-id="<?php echo esc_attr($this->post->nav_object_id); ?>"
 				data-nav-original-link="<?php echo esc_attr($this->post->nav_original_link); ?>"
-				data-nav-original-title="<?php echo esc_attr($this->post->nav_original_title); ?>"
+				data-nav-original-title="<?php echo esc_attr(strip_tags(html_entity_decode($this->post->nav_original_title))); ?>"
 				data-linktarget="<?php echo esc_attr($this->post->link_target); ?>">
 				<?php _e('Quick Edit', 'wp-nested-pages'); ?>
 			</a>
@@ -109,9 +109,10 @@ endif;
 		$out .= '</div>';
 		echo $out;
 	endif;
-	?>
 
+	if ( $this->can_user_perform_bulk_actions ) : ?>
 	<div class="np-bulk-checkbox">
 		<input type="checkbox" name="nestedpages_bulk[]" value="<?php echo esc_attr($this->post->id); ?>" data-np-bulk-checkbox="<?php echo esc_attr($this->post->title); ?>" class="np-redirect-bulk" data-np-post-type="<?php echo esc_attr($this->post->post_type); ?>" />
 	</div>
+	<?php endif ?>
 </div><!-- .row -->

@@ -123,7 +123,7 @@ $has_menu_options = ( $this->user->canSortPosts($this->post_type->name) && $this
 			<?php endif; ?>
 
 			<?php
-			$custom_fields_left = $this->custom_fields_repo->outputFields($this->post_type, 'left');
+			$custom_fields_left = $this->custom_fields_repo->outputQuickEditFields($this->post_type, 'left');
 			if ( $custom_fields_left ) echo $custom_fields_left;
 			?>
 
@@ -136,7 +136,13 @@ $has_menu_options = ( $this->user->canSortPosts($this->post_type->name) && $this
 				<label><?php _e( 'Template' ); ?></label>
 				<select name="page_template" class="np_template">
 					<option value="default"><?php _e( 'Default Template' ); ?></option>
-					<?php page_template_dropdown() ?>
+					<?php 
+          if( is_page() ){
+            page_template_dropdown();
+          }else{
+            page_template_dropdown('', $this->post_type->name);
+          }
+          ?>
 				</select>
 			</div>
 			<?php endif; ?>
@@ -188,7 +194,7 @@ $has_menu_options = ( $this->user->canSortPosts($this->post_type->name) && $this
 			<?php endif; ?>
 
 			<?php
-			$custom_fields_right = $this->custom_fields_repo->outputFields($this->post_type, 'right');
+			$custom_fields_right = $this->custom_fields_repo->outputQuickEditFields($this->post_type, 'right');
 			if ( $custom_fields_right ) echo $custom_fields_right;
 			?>
 
